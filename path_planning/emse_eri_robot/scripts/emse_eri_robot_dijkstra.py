@@ -1,13 +1,121 @@
 #! /usr/bin/env python
-
 import rospy
 from pp_msgs.srv import PathPlanningPlugin, PathPlanningPluginResponse
 from geometry_msgs.msg import Twist
 from gridviz import GridViz
+import csv
+
+def detect_obstacle_space(index, width, height, costmap):
+  """[This function aims at printing the 8 adjacent neighbors to the robot at every step the robot takes in the costmap.]
+
+  Args:
+      index ([type]): [description]
+      width ([type]): [description]
+      height ([type]): [description]
+      costmap ([type]): [description]
+      orthagonal_step_cost ([type]): [description]
+  """
+
+  obstacle_cost = 1 
+  """A donating value used to distinct between free space [0] and between obstacle space [1-254]
+  """
+  space = [] 
+  """A list containing the values denoting if obstacle is present there or not.
+  """
+  
+  upper = index - width
+  if upper > 0:
+    if costmap[upper] < obstacle_cost:
+      upper_space = "Free"
+      upper_space_coordinate = "(1,2)"
+      space.append([upper_space_coordinate, upper_space])
+    else:
+      upper_space = "Obstacle"
+      upper_space_coordinate = "(1,2)"
+      space.append([upper_space_coordinate, upper_space])
+  
+  left = index - 1
+  if left % width > 0:
+    if costmap[left] < obstacle_cost:
+      left_space = "Free"
+      left_space_coordinate = "(2,1)"
+      space.append([left_space_coordinate, left_space])
+    else:
+      left_space_coordinate = "(2,1)"
+      left_space = "Obstacle"
+      space.append([left_space_coordinate, left_space])
+
+  right = index + 1
+  if right % width != (width + 1):
+    if costmap[right] < obstacle_cost:
+      right_space = "Free"
+      right_space_coordinate = "(2,3)"
+      space.append([right_space_coordinate, right_space])
+    else:
+      right_space = "Obstacle"
+      right_space_coordinate = "(2,3)"
+      space.append([right_space_coordinate, right_space])
+
+  lower = index + width
+  if lower <= height * width:
+    if costmap[lower] < obstacle_cost:
+      lower_space = "Free"
+      lower_space_coordinate = "(3,2)"
+      space.append([lower_space_coordinate, lower_space])
+    else:
+      lower_space = "Obstacle"
+      lower_space_coordinate = "(3,2)"
+      space.append([lower_space_coordinate, lower_space])
+
+  upper_left = index - width - 1
+  if upper_left > 0 and upper_left % width > 0:
+    if costmap[upper_left] < obstacle_cost:
+      upper_left_space = "Free"
+      upper_left_coordinate = "(1,1)"
+      space.append([upper_left_coordinate, upper_left_space])
+    else: 
+      upper_left_space = "Obstacle"
+      upper_left_coordinate = "(1,1)"
+      space.append([upper_left_coordinate, upper_left_space])
+
+  upper_right = index - width + 1
+  if upper_right > 0 and (upper_right) % width != (width-1):
+    if costmap[upper_right] < obstacle_cost:
+      upper_right_space = "Free"
+      upper_right_coordinate = "(1,3)"
+      space.append([upper_right_coordinate, upper_right_space])
+    else: 
+      upper_right_coordinate = "(1,3)"
+      upper_right_space = "Obstacle"
+      space.append([upper_right_coordinate, upper_right_space])
+  
+  lower_left = index + width - 1
+  if lower_left < height * width and lower_left & width != 0:
+    if costmap[lower_left] < obstacle_cost:
+      lower_left_space = "Free"
+      lower_left_coordinate = "(3,1)"
+      space.append([lower_left_coordinate, lower_left_space])
+    else:
+      lower_left_coordinate = "(3,1)"
+      lower_left_space = "Obstacle"
+      space.append([lower_left_coordinate, lower_left_space])
+
+  lower_right = index + width + 1
+  if (lower_right) <= height * width and lower_right % width != (width-1):
+    if costmap[lower_right] < obstacle_cost:
+      lower_right_space = "Free"
+      lower_right_coordinate = "(3,3)"
+      space.append([lower_right_coordinate, lower_right_space])
+    else:
+      lower_right_coordinate = "(3,3)"
+      lower_right_space = "Obstacle"
+      space.append([lower_right_coordinate, lower_right_space])
+
+  return space
 
 def find_neighbors(index, width, height, costmap, orthogonal_step_cost):
   """
-  Identifies neighbor nodes inspecting the 8 adjacent neighbors
+  Identifies neighbor nodes inspecting the 4 adjacent neighbors
   Checks if neighbor is inside the map boundaries and if is not an obstacle according to a threshold
   Returns a list with valid neighbour nodes as [index, step_cost] pairs
   """
@@ -43,6 +151,16 @@ def find_neighbors(index, width, height, costmap, orthogonal_step_cost):
 
   return neighbors
 
+# def log_obstacle_space(req):
+#   costmap = req.costmap_ros
+#   width = req.width
+#   height = req.height
+#   start_index = req.start
+#   goal_index = req.goal
+
+#   for i in range(start_index, goal_index):
+#     obstacle_space = detect_obstacle_space(i, width, height, costmap)
+#     rospy.loginfo(obstacle_space)
 
 def make_plan(req):
   ''' 
@@ -51,6 +169,9 @@ def make_plan(req):
   ''' 
   # costmap as 1-D array representation
   costmap = req.costmap_ros
+  
+  # rospy.loginfo(costmap)
+
   # number of columns in the occupancy grid
   width = req.width
   # number of rows in the occupancy grid
@@ -62,6 +183,20 @@ def make_plan(req):
   # origin of grid map (bottom left pixel) w.r.t. world coordinates (Rviz's origin)
   origin = [-7.4, -7.4, 0]
 
+  i = start_index
+
+  while True:
+    obstacle_space = detect_obstacle_space(i, width, height, costmap)
+    with open('/home/whiskygrandee/catkin_ws/src/emse_bot/log/demo-log.csv', 'w', encoding = 'UTF-8') as f:
+      writer = csv.writer(f)
+      writer.writerow(obstacle_space)
+    rospy.loginfo(obstacle_space)
+    # rospy.loginfo(goal_index - start_index)
+    i = i + 1
+
+    if (i != goal_index):
+      break
+
   viz = GridViz(costmap, resolution, origin, start_index, goal_index, width)
 
   # time statistics
@@ -69,7 +204,7 @@ def make_plan(req):
 
   # calculate the shortes path using Dijkstra
   path = dijkstra(start_index, goal_index, width, height, costmap, resolution, origin, viz)
-
+  rospy.loginfo(path)
   if not path:
     rospy.logwarn("No path returned by Dijkstra's shortes path algorithm")
     path = []
@@ -84,6 +219,9 @@ def make_plan(req):
   resp = PathPlanningPluginResponse()
   resp.plan = path
   return resp
+
+
+
 
 def dijkstra(start_index, goal_index, width, height, costmap, resolution, origin, grid_viz):
   ''' 
@@ -108,7 +246,7 @@ def dijkstra(start_index, goal_index, width, height, costmap, resolution, origin
   # add start node to open list
   open_list.append([start_index, 0])
 
-  shortest_path = []
+  shortest_path = []  
 
   path_found = False
   rospy.loginfo('Dijkstra: Done with initialization')
@@ -188,9 +326,11 @@ def dijkstra(start_index, goal_index, width, height, costmap, resolution, origin
           node = parents[node]
   # reverse list
   shortest_path = shortest_path[::-1]
+  rospy.loginfo(shortest_path)
   rospy.loginfo('Dijkstra: Done reconstructing path')
-
   return shortest_path
+
+
 
 def clean_shutdown():
   cmd_vel.publish(Twist())

@@ -8,18 +8,18 @@
 
 <!-- Set name of the world to be launched, configure as required -->
 <!-- <arg name="world_name" default="worlds/empty.world"/> -->
-<arg name="world_name" default="$(find emse_eri_robot)/worlds/emse_eri_robot_base.world"/>
+<arg name="world_name" default="$(find emse_eri_robot)/worlds/MyWorldNida_20_20.world"/>
 
 <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(arg world_name)"/> 
     <arg name="paused" value="false"/>
-    <arg name="use_sim_time" value="true"/>
+    <arg name="use_sim_time" value="true"/> 
     <arg name="gui" value="$(arg use_gui)"/>
     <arg name="headless" value="true"/>
     <arg name="debug" value="false"/>
 </include>
 
-<arg name="x_pos" default="-2.9"/>
+<arg name="x_pos" default="-3.9"/>
 <arg name="y_pos" default="-2.0"/>
 <arg name="z_pos" default="0.0"/>
 <arg name="yaw" default="0.0"/>
