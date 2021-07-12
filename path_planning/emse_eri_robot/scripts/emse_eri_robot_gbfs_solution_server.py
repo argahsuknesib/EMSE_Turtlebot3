@@ -13,6 +13,7 @@ def make_plan(req):
   ''' 
   # costmap as 1-D array representation
   costmap = req.costmap_ros
+  
   # number of columns in the occupancy grid
   width = req.width
   # number of rows in the occupancy grid
