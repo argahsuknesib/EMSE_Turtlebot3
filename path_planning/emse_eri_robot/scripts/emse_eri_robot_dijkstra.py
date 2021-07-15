@@ -151,17 +151,6 @@ def find_neighbors(index, width, height, costmap, orthogonal_step_cost):
 
   return neighbors
 
-# def log_obstacle_space(req):
-#   costmap = req.costmap_ros
-#   width = req.width
-#   height = req.height
-#   start_index = req.start
-#   goal_index = req.goal
-
-#   for i in range(start_index, goal_index):
-#     obstacle_space = detect_obstacle_space(i, width, height, costmap)
-#     rospy.loginfo(obstacle_space)
-
 def make_plan(req):
   ''' 
   Callback function used by the service server to process
