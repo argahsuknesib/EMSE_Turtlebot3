@@ -4,6 +4,7 @@ from nav_msgs.msg import  Odometry, OccupancyGrid, Path
 from move_base_msgs.msg import MoveBaseActionGoal
 from rosgraph_msgs.msg import Clock
 from geometry_msgs.msg import Twist
+import csv
 
 linear_velocity_list = []
 angular_velocity_list = []
@@ -12,7 +13,6 @@ global_costmap_list = []
 goal_list = []
 global_plan_list = []
 clock_list = []
-
 
 def cmd_vel_callback(msg):
     linear_velocity_x = msg.linear.x
@@ -54,7 +54,7 @@ def global_costmap_callback(msg):
 
 
 def goal_callback(msg):
-    global_path = msg.poses
+    global_path = msg.goal
     global goal_list
     goal_list.append(global_path)
 
@@ -77,6 +77,15 @@ def main():
     rospy.Subscriber('/move_base/DWAPlannerROS/global_plan', Path, global_plan_callback)
     rospy.Subscriber('/clock', Clock, clock_callback)
     rospy.Subscriber('/cmd_vel', Twist, cmd_vel_callback)
+    with open('/home/whiskygrandee/catkin_ws/src/emse_bot/log/demo-log.csv','w', encoding = 'UTF-8') as f:
+        writer = csv.writer(f, delimiter=',', lineterminator= '\n')
+        writer.writerow(linear_velocity_list)
+        writer.writerow(angular_velocity_list)
+        writer.writerow(odometry_list)
+        writer.writerow(global_costmap_list)
+        writer.writerow(goal_list)
+        writer.writerow(global_plan_list)
+        writer.writerow(clock_list)
     rospy.spin()
 
 if __name__ == '__main__':
