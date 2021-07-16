@@ -172,19 +172,19 @@ def make_plan(req):
   # origin of grid map (bottom left pixel) w.r.t. world coordinates (Rviz's origin)
   origin = [-7.4, -7.4, 0]
 
-  i = start_index
+  # i = start_index
 
-  while True:
-    obstacle_space = detect_obstacle_space(i, width, height, costmap)
-    with open('/home/whiskygrandee/catkin_ws/src/emse_bot/log/demo-log.csv', 'w', encoding = 'UTF-8') as f:
-      writer = csv.writer(f)
-      writer.writerow(obstacle_space)
-    rospy.loginfo(obstacle_space)
-    # rospy.loginfo(goal_index - start_index)
-    i = i + 1
+  # while True:
+  #   obstacle_space = detect_obstacle_space(i, width, height, costmap)
+  #   with open('/home/whiskygrandee/catkin_ws/src/emse_bot/log/demo-log.csv', 'w', encoding = 'UTF-8') as f:
+  #     writer = csv.writer(f)
+  #     writer.writerow(obstacle_space)
+  #   rospy.loginfo(obstacle_space)
+  #   # rospy.loginfo(goal_index - start_index)
+  #   i = i + 1
 
-    if (i != goal_index):
-      break
+  #   if (i != goal_index):
+  #     break
 
   viz = GridViz(costmap, resolution, origin, start_index, goal_index, width)
 
