@@ -4,11 +4,11 @@
 <launch>
 
   <!-- Run the map server to load a pre-made map -->
-  <arg name="map_file" default="$(find emse_eri_robot)/maps/map_unit3_74x74x20cm.yaml"/>
+  <arg name="map_file" default="$(find emse_eri_robot)/maps/map_emse_eri_robot_74x74x20cm.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!-- MOVE_BASE -->
-  <include file="$(find unit3)/launch/move_base.launch" />
+  <include file="$(find emse_eri_robot)/launch/move_base.launch" />
 
   <!-- Determine whether to run Rviz or not & set Rviz config file-->
   <arg name="use_rviz" default="true" />
