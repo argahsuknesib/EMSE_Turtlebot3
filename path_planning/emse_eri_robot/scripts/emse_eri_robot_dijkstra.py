@@ -3,6 +3,8 @@ import rospy
 from pp_msgs.srv import PathPlanningPlugin, PathPlanningPluginResponse
 from geometry_msgs.msg import Twist
 from gridviz import GridViz
+import random
+import secrets
 import csv
 
 def detect_obstacle_space(index, width, height, costmap):
@@ -125,28 +127,30 @@ def find_neighbors(index, width, height, costmap, orthogonal_step_cost):
   # threshold value used to reject neighbor nodes as they are considered as obstacles [1-254]
   lethal_cost = 1
 
-  upper = index - width
+  secretsGenerator = secrets.SystemRandom()
+
+  upper = (index - width)
   if upper > 0:
     if costmap[upper] < lethal_cost:
-      step_cost = orthogonal_step_cost + costmap[upper]/255
+      step_cost = secretsGenerator.randint(0, upper )* orthogonal_step_cost + costmap[upper]/255
       neighbors.append([upper, step_cost])
 
-  left = index - 1
+  left = (index - 1)
   if left % width > 0:
     if costmap[left] < lethal_cost:
-      step_cost = orthogonal_step_cost + costmap[left]/255
+      step_cost = secretsGenerator.randint(0,left) * orthogonal_step_cost + costmap[left]/255
       neighbors.append([left, step_cost])
 
-  right = index + 1
+  right = (index + 1)
   if right % width != (width + 1):
     if costmap[right] < lethal_cost:
-      step_cost = orthogonal_step_cost + costmap[right]/255
+      step_cost = secretsGenerator.randint(0,right) * orthogonal_step_cost + costmap[right]/255
       neighbors.append([right, step_cost])
 
-  lower = index + width
+  lower = (index + width)
   if lower <= height * width:
     if costmap[lower] < lethal_cost:
-      step_cost = orthogonal_step_cost + costmap[lower]/255
+      step_cost = secretsGenerator.randint(0,lower) * orthogonal_step_cost + costmap[lower]/255
       neighbors.append([lower, step_cost])
 
   return neighbors
