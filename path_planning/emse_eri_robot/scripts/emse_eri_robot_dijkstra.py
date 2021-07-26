@@ -132,25 +132,25 @@ def find_neighbors(index, width, height, costmap, orthogonal_step_cost):
   upper = (index - width)
   if upper > 0:
     if costmap[upper] < lethal_cost:
-      step_cost = secretsGenerator.randint(0, upper )* orthogonal_step_cost + costmap[upper]/255
+      step_cost =upper* orthogonal_step_cost + costmap[upper]/255
       neighbors.append([upper, step_cost])
 
   left = (index - 1)
   if left % width > 0:
     if costmap[left] < lethal_cost:
-      step_cost = secretsGenerator.randint(0,left) * orthogonal_step_cost + costmap[left]/255
+      step_cost =  left * orthogonal_step_cost + costmap[left]/255
       neighbors.append([left, step_cost])
 
   right = (index + 1)
   if right % width != (width + 1):
     if costmap[right] < lethal_cost:
-      step_cost = secretsGenerator.randint(0,right) * orthogonal_step_cost + costmap[right]/255
+      step_cost =  right * orthogonal_step_cost + costmap[right]/255
       neighbors.append([right, step_cost])
 
   lower = (index + width)
   if lower <= height * width:
     if costmap[lower] < lethal_cost:
-      step_cost = secretsGenerator.randint(0,lower) * orthogonal_step_cost + costmap[lower]/255
+      step_cost = lower * orthogonal_step_cost + costmap[lower]/255
       neighbors.append([lower, step_cost])
 
   return neighbors
@@ -325,6 +325,7 @@ def dijkstra(start_index, goal_index, width, height, costmap, resolution, origin
 
 
 
+
 def clean_shutdown():
   cmd_vel.publish(Twist())
   rospy.sleep(1)
@@ -333,6 +334,8 @@ if __name__ == '__main__':
   rospy.init_node('dijkstra_path_planning_service_server', log_level=rospy.INFO, anonymous=False)
   make_plan_service = rospy.Service("/move_base/SrvClientPlugin/make_plan", PathPlanningPlugin, make_plan)
   cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
+  cmd_vel_value = Twist()
+  
   rospy.on_shutdown(clean_shutdown)
 
   while not rospy.core.is_shutdown():
