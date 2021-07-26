@@ -256,7 +256,7 @@ def dijkstra(start_index, goal_index, width, height, costmap, resolution, origin
     closed_list.add(current_node)
 
     # Optional: visualize closed nodes
-    grid_viz.set_color(current_node,"pale yellow")
+    # grid_viz.set_color(current_node,"pale yellow")
 
     # If current_node is the goal, exit the main loop
     if current_node == goal_index:
@@ -301,7 +301,7 @@ def dijkstra(start_index, goal_index, width, height, costmap, resolution, origin
         open_list.append([neighbor_index, g_cost])
 
         # Optional: visualize frontier
-        grid_viz.set_color(neighbor_index,'orange')
+        # grid_viz.set_color(neighbor_index,'orange')
 
   rospy.loginfo('Dijkstra: Done traversing nodes in open_list')
 
@@ -319,7 +319,7 @@ def dijkstra(start_index, goal_index, width, height, costmap, resolution, origin
           node = parents[node]
   # reverse list
   shortest_path = shortest_path[::-1]
-  rospy.loginfo(shortest_path)
+  # rospy.loginfo(shortest_path)
   rospy.loginfo('Dijkstra: Done reconstructing path')
   return shortest_path
 
