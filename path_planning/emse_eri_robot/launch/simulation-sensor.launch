@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- High level launch file for Unit 2 Simulation  -->
 <launch>
 
 <env name="GAZEBO_MODEL_PATH" value="$(find emse_eri_robot)/models/" />
@@ -23,15 +22,17 @@
 <arg name="y_pos" default="-2.0"/>
 <arg name="z_pos" default="0.0"/>
 <arg name="yaw" default="0.0"/>
+<arg name="my_map_resolution" default="0.2"/>
 
 <!-- config Turtlebot -->
 <arg name="base" value="kobuki"/> <!-- create, roomba -->
 <arg name="stacks" value="hexagons"/> <!-- circles, hexagons -->
 <arg name="3d_sensor" value="kinect"/> <!-- kinect, asus_xtion_pro -->
+<arg name="model" value="burger"/>
 
 <!-- Spawn a robot into Gazebo -->
 <!-- Requires: urdf 'robot_description' in parameter server -->
-<arg name="urdf_file" default="$(find xacro)/xacro '$(find turtlebot_description)/robots/$(arg base)_$(arg stacks)_$(arg 3d_sensor).urdf.xacro'" />
+<arg name="urdf_file" default="$(find xacro)/xacro '$(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro'" />
 <param name="robot_description" command="$(arg urdf_file)" />
 
 
@@ -51,10 +52,12 @@
   <!-- Broadcast TF values for all moving elements in the URDF description tree such as wheels, joints -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
-  <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
+  <include file="$(find emse_eri_robot)/launch/amcl.launch">
+  <!-- <arg name="map_file" default="(find emse_eri_robot)/maps/map_emse_eri_robot_74x74x20cm.pgm"/> -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
     <arg name="scan_topic" value="scan"/>
-    <arg name="use_map_topic" value="true"/>
-    <arg name="initial_pose_x" value="$(arg x_pos"/>
+    <!-- <arg name="use_map_topic" value="true"/> -->
+    <arg name="initial_pose_x" value="$(arg x_pos)"/>
     <arg name="initial_pose_y" value="$(arg y_pos)"/>
     <arg name="initial_pose_a" value="$(arg z_pos)"/>
   </include>
