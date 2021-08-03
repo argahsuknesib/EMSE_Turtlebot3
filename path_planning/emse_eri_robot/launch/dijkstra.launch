@@ -18,5 +18,6 @@
 
   <!-- Start service server that responds with a plan for global path planning -->
   <node pkg="emse_eri_robot" name="dijkstra" type="emse_eri_robot_dijkstra.py" output="screen"/> 
+  <node pkg="emse_eri_robot" name="manhattan_distance" type="manhattan_distance.py" output="screen"/>
 
 </launch>
