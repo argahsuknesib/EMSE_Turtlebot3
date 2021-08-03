@@ -4,25 +4,25 @@ from std_msgs import String
 from nav_msgs import Odometry
 from move_base_msgs.msg import MoveBaseGoal
 
-class ManhattanDistance(object):
-    def __init__(self,publisher):
-        self._publisher = publisher
+odom_x = 0
+odom_y = 0
+goal_x = 0
+goal_y = 0
+
         
 def odom_callback(msg):
+    global odom_x, odom_y
     odom_x = msg.pose.pose.position.x
     odom_y = msg.pose.pose.position.y
-    return odom_x, odom_y
 
 def goal_callback(msg):
+    global goal_x, goal_y
     goal_x = msg.target_pose.pose.position.x
     goal_y = msg.target_pose.pose.position.y
-    return goal_x, goal_y
 
 def calculate_distance():
-    g_x, g_y = goal_callback()
-    o_x, o_y = odom_callback()
-
-    manhattan_distance = abs(abs(g_x - o_x) + abs(g_y - o_y))
+    global goal_x, goal_y, odom_x, odom_y
+    manhattan_distance = abs(abs(goal_x - odom_x) - abs(goal_y - odom_y))
     return manhattan_distance
 
 def main():
