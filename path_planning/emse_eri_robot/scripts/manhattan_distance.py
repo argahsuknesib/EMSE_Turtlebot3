@@ -30,9 +30,10 @@ def main():
     rospy.Subscriber("/odom", Odometry, odom_callback)
     rospy.Subscriber("/move_base/goal", MoveBaseActionGoal, goal_callback)
     publisher = rospy.Publisher('/manhattan_distance', Int32, queue_size = 5)
-    distance = calculate_distance()
-    rospy.loginfo(distance)
-    publisher.publish(distance)
+    while not rospy.is_shutdown():
+        distance = calculate_distance()
+        rospy.loginfo(distance)
+        publisher.publish(distance)
     rospy.spin()
 
 if __name__ == '__main__':
